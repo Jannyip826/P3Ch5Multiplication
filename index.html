@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>三年級乘法應用題 - 多變語句大挑戰</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            margin: 0; 
+            padding: 20px 10px;
+            font-family: "Microsoft JhengHei", "PingFang TC", Arial, sans-serif; 
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        #game-container { 
+            width: 100%; 
+            max-width: 980px; 
+            background: rgba(255, 255, 255, 0.96); 
+            border-radius: 25px; 
+            padding: 25px 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+            text-align: center; 
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #2d3436;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: #ffeaa7;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #fdcb6e;
+        }
+
+        .badge.progress {
+            background: #e1f5fe;
+            border-color: #03a9f4;
+            color: #0277bd;
+        }
+
+        .badge.score {
+            background: #e8f8f5;
+            border-color: #2ecc71;
+            color: #1e8449;
+        }
+
+        .switch-lv-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+            transition: all 0.2s;
+        }
+
+        .switch-lv-btn:hover {
+            background: #5a4bcf;
+            transform: scale(1.05);
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            border: 3px solid #dfe6e9;
+            border-radius: 20px;
+            padding: 18px 22px;
+            font-size: 22px;
+            line-height: 1.6;
+            color: #2d3436;
+            text-align: left;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .main-workspace {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .left-panel {
+            flex: 1 1 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .single-rect-input {
+            width: 100%;
+            max-width: 400px;
+            height: 60px;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            color: #2d3436;
+            background: #ffffff;
+            border: 3.5px solid #0984e3;
+            border-radius: 15px;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            letter-spacing: 2px;
+        }
+
+        .single-rect-input:focus {
+            border-color: #fdcb6e;
+            box-shadow: 0 0 12px rgba(253, 203, 110, 0.8);
+            background: #fffdf0;
+        }
+
+        .single-rect-input:disabled {
+            background: #e9ecef;
+            border-color: #b2bec3;
+            color: #636e72;
+        }
+
+        .equation-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .status-icon {
+            font-size: 32px;
+            min-width: 38px;
+        }
+
+        .statement-row {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .statement-input {
+            width: 110px;
+            height: 50px;
+            font-size: 24px;
+        }
+
+        .keypad-panel {
+            flex: 0 0 260px;
+            background: #eef2f7;
+            border: 3px solid #b2bec3;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            margin: 0 auto;
+        }
+
+        .keypad-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #485563;
+            margin-bottom: 10px;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .key-btn {
+            height: 52px;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #2d3436;
+            box-shadow: 0 4px 0 #b2bec3;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .key-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b2bec3;
+        }
+
+        .key-btn.op-key {
+            background: #ff7675;
+            color: white;
+            box-shadow: 0 4px 0 #d63031;
+        }
+
+        .key-btn.func-key {
+            background: #ffeaa7;
+            color: #d63031;
+            box-shadow: 0 4px 0 #fdcb6e;
+            font-size: 18px;
+        }
+
+        .action-btn { 
+            font-size: 22px; 
+            font-weight: bold;
+            padding: 12px 35px; 
+            background: #0984e3; 
+            color: white; 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            box-shadow: 0 6px 12px rgba(9, 132, 227, 0.3);
+            transition: all 0.15s; 
+            margin-top: 10px;
+        }
+
+        .action-btn:hover { background: #0069d9; }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 5px rgba(9, 132, 227, 0.3); }
+        .action-btn:disabled { background: #b2bec3; cursor: not-allowed; box-shadow: none; }
+
+        .msg { 
+            margin-top: 10px; 
+            font-size: 22px; 
+            font-weight: bold; 
+            min-height: 32px; 
+            width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            padding: 15px;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 25px;
+            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-box h2 {
+            font-size: 26px;
+            color: #d63031;
+            margin-top: 0;
+            border-bottom: 3px dashed #fdcb6e;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .level-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            justify-content: center;
+            margin: 25px 0 10px 0;
+        }
+
+        .level-card {
+            background: #f8f9fa;
+            border: 4px solid #74b9ff;
+            border-radius: 20px;
+            padding: 18px 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .level-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: #0984e3;
+            box-shadow: 0 15px 25px rgba(9, 132, 227, 0.25);
+            background: #e3f2fd;
+        }
+
+        .level-card .card-icon { font-size: 38px; margin-bottom: 6px; }
+        .level-card .card-title { font-size: 18px; font-weight: bold; color: #2d3436; margin-bottom: 6px; }
+        .level-card .card-desc { font-size: 13px; color: #636e72; line-height: 1.4; }
+
+        .teacher-guide { font-size: 17px; line-height: 1.6; color: #2c3e50; }
+        .teacher-guide .highlight { color: #d63031; font-weight: bold; }
+        .teacher-guide .concept-box {
+            background: #fff9db;
+            border-left: 6px solid #f1c40f;
+            padding: 12px 18px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .visual-demo {
+            background: #f0f9ff;
+            border: 2px dashed #74b9ff;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .demo-title { font-weight: bold; color: #0984e3; font-size: 18px; }
+        .timer-tag {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            border: 1px solid #81d4fa;
+        }
+
+        .replay-btn {
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 184, 148, 0.3);
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+
+        .replay-btn:hover {
+            background: #00a182;
+            transform: scale(1.05);
+        }
+
+        .groups-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+        .group-card { background: #ffffff; border: 3px solid #0984e3; border-radius: 12px; padding: 8px; width: 105px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); opacity: 0; transform: translateY(20px); }
+        .group-card.child-1 { border-color: #ff7675; background: #fff5f5; }
+        .group-card.child-2 { border-color: #74b9ff; background: #f0f8ff; }
+        .group-card.child-3 { border-color: #fdcb6e; background: #fffdf0; }
+        .group-card.child-4 { border-color: #a29bfe; background: #f8f7ff; }
+
+        .group-card .icon { font-size: 30px; }
+        .group-card .label { font-size: 14px; color: #2d3436; font-weight: bold; }
+        .group-card .count { font-size: 14px; color: #d63031; font-weight: bold; margin-top: 2px; }
+
+        .visual-demo.animate .group-card { animation: popCard 0.6s ease forwards; }
+        .visual-demo.animate .child-1 { animation-delay: 0.2s; }
+        .visual-demo.animate .child-2 { animation-delay: 0.7s; }
+        .visual-demo.animate .child-3 { animation-delay: 1.2s; }
+        .visual-demo.animate .child-4 { animation-delay: 1.7s; }
+
+        .people-container { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+        .person-badge { background: #ffffff; border: 2.5px solid #6c5ce7; border-radius: 12px; padding: 6px 12px; font-weight: bold; font-size: 16px; color: #2d3436; opacity: 0; transform: scale(0.8); }
+        .person-badge.me { border-color: #e84393; background: #fd79a8; color: white; }
+        .visual-demo.animate .person-badge { animation: popCard 0.5s ease forwards; }
+
+        .merge-arrow { font-size: 22px; color: #00b894; opacity: 0; margin: 8px 0; }
+        .visual-demo.animate .merge-arrow { animation: fadeIn 0.6s ease 2.2s forwards; }
+
+        .total-result-card { background: #e8f8f5; border: 3px solid #2ecc71; border-radius: 12px; padding: 10px 16px; display: inline-block; font-size: 18px; font-weight: bold; color: #1e8449; opacity: 0; }
+        .visual-demo.animate .total-result-card { animation: popCard 0.8s ease 2.6s forwards; }
+
+        @keyframes popCard { 0% { opacity: 0; transform: translateY(15px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .start-btn { display: block; margin: 15px auto 0; background: #00b894; box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4); }
+        .start-btn:hover { background: #00a182; }
+
+        @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <h1>🎒 三年級乘法應用題挑戰</h1>
+    
+    <div class="header-info">
+        <div class="badge">關卡：第 <span id="lv-num">1</span> 關 (<span id="lv-title">找原有</span>)</div>
+        <div class="badge progress">進度：第 <span id="q-curr">1</span> / <span id="q-total">5</span> 題</div>
+        <div class="badge score">得分：<span id="score">0</span></div>
+        <button class="switch-lv-btn" onclick="openLevelSelect()">🎯 切換關卡</button>
+    </div>
+    
+    <div class="problem-card" id="problem-text">請選擇關卡開始挑戰！</div>
+
+    <div class="main-workspace">
+        <div class="left-panel">
+            <div style="width: 100%;">
+                <div style="font-size: 16px; font-weight: bold; color: #0984e3; margin-bottom: 6px;">請寫出完整的橫式算式：</div>
+                <div class="equation-wrapper">
+                    <input type="text" id="eq-rect-input" class="single-rect-input" placeholder="點擊右側鍵盤輸入橫式..." readonly>
+                    <span id="eq-status-icon" class="status-icon"></span>
+                </div>
+            </div>
+
+            <div id="step2-area" style="display: none; flex-direction: column; align-items: center; gap: 12px; width: 100%; margin-top: 10px;">
+                <div class="equation-wrapper">
+                    <span style="color:#d63031; font-size: 28px; font-weight: bold;">＝</span>
+                    <input type="text" id="in-ans1" class="single-rect-input" style="max-width: 180px;" placeholder="計算結果" readonly>
+                </div>
+
+                <div class="statement-row" id="statement-box"></div>
+            </div>
+
+            <button id="main-btn" class="action-btn" onclick="handleButtonClick()">檢查橫式</button>
+            <div id="feedback" class="msg"></div>
+        </div>
+
+        <div class="keypad-panel">
+            <div class="keypad-title">⌨️ 點擊輸入鍵盤</div>
+            <div class="keypad-grid">
+                <button class="key-btn" onclick="keypadPress('7')">7</button>
+                <button class="key-btn" onclick="keypadPress('8')">8</button>
+                <button class="key-btn" onclick="keypadPress('9')">9</button>
+                <button class="key-btn op-key" onclick="keypadPress('÷')">÷</button>
+
+                <button class="key-btn" onclick="keypadPress('4')">4</button>
+                <button class="key-btn" onclick="keypadPress('5')">5</button>
+                <button class="key-btn" onclick="keypadPress('6')">6</button>
+                <button class="key-btn op-key" onclick="keypadPress('×')">×</button>
+
+                <button class="key-btn" onclick="keypadPress('1')">1</button>
+                <button class="key-btn" onclick="keypadPress('2')">2</button>
+                <button class="key-btn" onclick="keypadPress('3')">3</button>
+                <button class="key-btn op-key" onclick="keypadPress('－')">－</button>
+
+                <button class="key-btn" onclick="keypadPress('0')">0</button>
+                <button class="key-btn func-key" onclick="keypadPress('BACK')">⌫</button>
+                <button class="key-btn func-key" onclick="keypadPress('CLEAR')">C</button>
+                <button class="key-btn op-key" onclick="keypadPress('＋')">＋</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 關卡選擇 Modal -->
+<div id="level-select-modal" class="modal-overlay">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎯 請選擇你想挑戰的關卡</h2>
+        <p style="font-size: 18px; color: #636e72;">每關 100+ 題，語法與敘述多變，每次亂數抽題：</p>
+        
+        <div class="level-select-grid">
+            <div class="level-card" onclick="selectLevel(1)">
+                <div class="card-icon">🍎</div>
+                <div class="card-title">第一關：找原有</div>
+                <div class="card-desc">多變分發/裝箱/買賣情境<br><b style="color:#0984e3;">（多種句型 · 100+題）</b></div>
+            </div>
+            
+            <div class="level-card" onclick="selectLevel(2)">
+                <div class="card-icon">🏊‍♂️</div>
+                <div class="card-title">第二關：來回問題</div>
+                <div class="card-desc">游泳/跑步/往返車程情境<br><b style="color:#d63031;">（多元問題 · 100+題）</b></div>
+            </div>
+
+            <div class="level-card" onclick="selectLevel(3)">
+                <div class="card-icon">🌟</div>
+                <div class="card-title">第三關：倍數問題</div>
+                <div class="card-desc">數量/長度/價格/頁數加倍<br><b style="color:#e65100;">（多角度比較 · 100+題）</b></div>
+            </div>
+
+            <div class="level-card" onclick="selectLevel(4)">
+                <div class="card-icon">🔍</div>
+                <div class="card-title">第四關：多餘資料</div>
+                <div class="card-desc">含年齡/尺寸/干擾數量<br><b style="color:#d63031;">（強化資訊篩選 · 100+題）</b></div>
+            </div>
+
+            <div class="level-card" onclick="selectLevel(5)" style="border-color: #e84393;">
+                <div class="card-icon">👫</div>
+                <div class="card-title">第五關：我和同學</div>
+                <div class="card-desc">「我和X人」多元消費/得分問題<br><b style="color:#e84393;">（多樣敘述 · 100+題）</b></div>
+            </div>
+
+            <div class="level-card" onclick="selectLevel(6)" style="border-color: #00b894;">
+                <div class="card-icon">📦</div>
+                <div class="card-title">第六關：一打/半打</div>
+                <div class="card-desc">無數字提示概念題型<br><b style="color:#00b894;">（考查換算概念 · 100+題）</b></div>
+            </div>
+
+            <div class="level-card" onclick="selectLevel(7)" style="border-color: #ff9f43;">
+                <div class="card-icon">🔥</div>
+                <div class="card-title">第七關：綜合大挑戰</div>
+                <div class="card-desc">不設解難策略 · 共 10 題<br><b style="color:#ff9f43;">（涵蓋1-6關隨機題）</b></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 策略 Modal 系列 (1-6關) -->
+<div id="strategy-modal-lv1" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>🍎 第一關解難策略：【找原有】</h2>
+        <div class="teacher-guide">
+            <p>👋 「找原有」有許多不同的問法（如分發、裝箱、打包、買賣），核心概念都是把分開的各份合起來：</p>
+            <div class="concept-box">📌 <b>例題概念：</b>「老師把手工紙分給 <b style="color:#0984e3;">4 個小朋友</b>，每人分得 <b style="color:#d63031;">18 張</b>。老師原有手工紙多少張？」</div>
+            <div class="visual-demo" id="visual-demo-lv1">
+                <div class="demo-header">
+                    <span class="demo-title">🎬 視覺化圖解演練</span>
+                    <div>
+                        <button class="replay-btn" onclick="replayDemoAnimation(1)">🔄 重看動畫</button>
+                        <span class="timer-tag" id="demo-timer-lv1">⏳ 10 秒後自動播放圖解動畫...</span>
+                    </div>
+                </div>
+                <div class="groups-container">
+                    <div class="group-card child-1"><div class="icon">👧🏻</div><div class="label">小紅</div><div class="count">📄 18 張</div></div>
+                    <div class="group-card child-2"><div class="icon">👦🏽</div><div class="label">小明</div><div class="count">📄 18 張</div></div>
+                    <div class="group-card child-3"><div class="icon">👧🏼</div><div class="label">小麗</div><div class="count">📄 18 張</div></div>
+                    <div class="group-card child-4"><div class="icon">👦🏻</div><div class="label">小強</div><div class="count">📄 18 張</div></div>
+                </div>
+                <div class="merge-arrow">⬇️ 把它們合起來變回原本總數（用乘法） ⬇️</div>
+                <div class="total-result-card">🎁 公式：原有總數 ＝ 每份數量 × 份數 <br><span style="font-size: 16px; color:#0984e3;">（ 計算：18 × 4 ＝ 72 張 ）</span></div>
+            </div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(1)">開始第一關！</button>
+    </div>
+</div>
+
+<div id="strategy-modal-lv2" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>🏊‍♂️ 第二關解難策略：【來回問題】</h2>
+        <div class="teacher-guide">
+            <p>👋 不管是游泳、跑步還是車程往返，看到「來回」或「往返」時，單趟距離都要計算兩次（乘以 2）：</p>
+            <div class="concept-box">📌 <b>例題概念：</b>「泳池長 <b style="color:#0984e3;">25 米</b>。柏康<b style="color:#d63031;">來回</b>游了 <b style="color:#0984e3;">7 次</b>，他共游了多少米？」</div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(2)">開始第二關！</button>
+    </div>
+</div>
+
+<div id="strategy-modal-lv3" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>🌟 第三關解難策略：【倍數問題】</h2>
+        <div class="teacher-guide">
+            <p>👋 題目可能是問「幾倍大」、「幾倍長」或「幾倍貴」，先找準基準量，再乘以倍數：</p>
+            <div class="concept-box">📌 <b>例題概念：</b>「哥哥有積木 <b style="color:#0984e3;">12 塊</b>，弟弟的積木數量是哥哥的 <b style="color:#d63031;">3 倍</b>。弟弟有積木多少塊？」</div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(3)">開始第三關！</button>
+    </div>
+</div>
+
+<div id="strategy-modal-lv4" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>🔍 第四關解難策略：【多餘資料】</h2>
+        <div class="teacher-guide">
+            <p>👋 題目中可能混入「年齡」、「無關的物品」、「尺寸」等數字，請仔細看清問題到底求什麼：</p>
+            <div class="concept-box">📌 <b>例題概念：</b>「9 歲的小明買了 <b style="color:#0984e3;">5 本</b>筆記本，每本售 <b style="color:#d63031;">12 元</b>，共需付多少元？」（9 歲是多餘資料）</div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(4)">開始第四關！</button>
+    </div>
+</div>
+
+<div id="strategy-modal-lv5" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>👫 第五關解難策略：【我和同學】</h2>
+        <div class="teacher-guide">
+            <p>👋 注意「我和 X 位同學」代表總人數是 <span class="highlight">1 ＋ X</span> 人！有些題型還會結合價格加倍：</p>
+            
+            <div class="concept-box">
+                📌 <b>例題概念：</b>「每包花生的售價是薯片的 <b style="color:#d63031;">3 倍</b>。薯片售 <b style="color:#0984e3;">11 元</b>，柏康和 <b style="color:#0984e3;">5 個同學</b>各買了一包花生，他們共需付多少元？」
+            </div>
+
+            <div class="visual-demo" id="visual-demo-lv5">
+                <div class="demo-header">
+                    <span class="demo-title">🎬 人數與加倍連乘圖解演練</span>
+                    <div>
+                        <button class="replay-btn" onclick="replayDemoAnimation(5)">🔄 重看動畫</button>
+                        <span class="timer-tag" id="demo-timer-lv5">⏳ 10 秒後自動播放圖解動畫...</span>
+                    </div>
+                </div>
+
+                <div style="font-weight: bold; color: #2c3e50; font-size: 18px; margin-bottom: 8px;">
+                    1. 先算總人數：<span style="color:#e84393;">柏康 (1人) + 5 個同學 ＝ 共 6 人</span>
+                </div>
+                
+                <div class="people-container">
+                    <div class="person-badge me">🙋‍♂️ 柏康</div>
+                    <div class="person-badge">👦 同學 1</div>
+                    <div class="person-badge">👧 同學 2</div>
+                    <div class="person-badge">👦 同學 3</div>
+                    <div class="person-badge">👧 同學 4</div>
+                    <div class="person-badge">👦 同學 5</div>
+                </div>
+
+                <div class="merge-arrow">⬇️ 2. 花生價錢是薯片的 3 倍 (11 × 3)，再乘以 6 人 ⬇️</div>
+
+                <div class="total-result-card">
+                    🎁 連乘公式：薯片單價 × 倍數 × 總人數 <br>
+                    <span style="font-size: 16px; color:#0984e3;">（ 連乘計算：11 × 3 × 6 ＝ 198 元 ）</span>
+                </div>
+            </div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(5)">開始第五關！</button>
+    </div>
+</div>
+
+<div id="strategy-modal-lv6" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+        <h2>📦 第六關解難策略：【一打與半打】</h2>
+        <div class="teacher-guide">
+            <p>👋 題目中<b>不會顯示數量提示</b>，你需要記住隱藏的關鍵換算：</p>
+            
+            <div class="concept-box">
+                📌 <b>關鍵換算記憶：</b><br>
+                • <b style="color:#d63031;">1 打 ＝ 12 個</b><br>
+                • <b style="color:#0984e3;">半打 ＝ 6 個</b>
+            </div>
+
+            <div class="visual-demo" id="visual-demo-lv6">
+                <div class="demo-header">
+                    <span class="demo-title">🎬 數量換算與連乘圖解演練</span>
+                    <div>
+                        <button class="replay-btn" onclick="replayDemoAnimation(6)">🔄 重看動畫</button>
+                        <span class="timer-tag" id="demo-timer-lv6">⏳ 10 秒後自動播放圖解動畫...</span>
+                    </div>
+                </div>
+
+                <div style="font-weight: bold; color: #2c3e50; font-size: 18px; margin-bottom: 8px;">
+                    1. 換算紙盒數量：<span style="color:#d63031;">6 打紙盒 ＝ 12 × 6 ＝ 72 個紙盒</span>
+                </div>
+
+                <div class="groups-container">
+                    <div class="group-card child-1"><div class="icon">📦</div><div class="label">1 打</div><div class="count">12 個盒</div></div>
+                    <div class="group-card child-2"><div class="icon">📦</div><div class="label">6 打</div><div class="count">12 × 6 個</div></div>
+                </div>
+
+                <div class="merge-arrow">⬇️ 2. 每個紙盒可放 9 件西餅，直接用連乘計算 ⬇️</div>
+
+                <div class="total-result-card">
+                    🎁 公式：每盒件數 × 12 (1打數量) × 打數 <br>
+                    <span style="font-size: 16px; color:#0984e3;">（ 連乘計算：9 × 12 × 6 ＝ 648 件 ）</span>
+                </div>
+            </div>
+        </div>
+        <button class="action-btn start-btn" onclick="closeStrategyModal(6)">開始第六關！</button>
+    </div>
+</div>
+
+<!-- 通關 Modal 系列 -->
+<div id="lv1-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第一關【找原有】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(2)">挑戰第二關【來回】 🚀</button>
+    </div>
+</div>
+
+<div id="lv2-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第二關【來回問題】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(3)">挑戰第三關【倍數】 🚀</button>
+    </div>
+</div>
+
+<div id="lv3-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第三關【倍數問題】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(4)">挑戰第四關【多餘資料】 🚀</button>
+    </div>
+</div>
+
+<div id="lv4-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第四關【多餘資料】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(5)">挑戰第五關【我和同學】 🚀</button>
+    </div>
+</div>
+
+<div id="lv5-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第五關【我和同學】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(6)">挑戰第六關【一打/半打】 🚀</button>
+    </div>
+</div>
+
+<div id="lv6-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🎉 恭喜通過第六關【一打/半打】！</h2>
+        <button class="action-btn start-btn" onclick="selectLevel(7)">挑戰第七關【綜合大挑戰】 🔥</button>
+    </div>
+</div>
+
+<div id="lv7-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🏆 太棒了！您已成功通過第七關【綜合大挑戰】！</h2>
+        <button class="action-btn start-btn" onclick="showGameWinModal()">查看最終榮譽榜 🏆</button>
+    </div>
+</div>
+
+<div id="game-win-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box" style="text-align: center;">
+        <h2>🏆 恭喜成為【乘法應用題大師】！</h2>
+        <p style="font-size: 20px; color:#2c3e50; margin: 20px 0;">你成功通關了全套七大乘法應用題挑戰！</p>
+        <p style="font-size: 26px; font-weight: bold; color: #2ecc71;" id="final-stats"></p>
+        <button class="action-btn start-btn" onclick="openLevelSelect()">回到關卡選單 🎯</button>
+    </div>
+</div>
+
+<script>
+    let currentLevel = 1;
+    let currentQIndex = 0;
+    let totalQuestions = 5;
+    let score = 0;
+
+    let currentQData = null;
+    let isStep1Passed = false;
+    let hasErroredThisQuestion = false;
+
+    let demoCountdown = 10;
+    let demoTimerInterval = null;
+
+    let activeInputId = 'eq-rect-input';
+
+    const levelQuestionBanks = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] };
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 初始化建構多元語句格式的題目庫 (100+題/關)
+    function initQuestionBanks() {
+        // ===== 第一關：找原有 =====
+        const l1Formats = [
+            (role, item, unit, n1, n2) => ({
+                text: `${role}把${item}分給 ${n2} 個小朋友，每人分得 ${n1} ${unit}。${role}原有${item}多少${unit}？`,
+                prefix: `${role}原有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `${role}把一批${item}打包裝箱，一共裝了 ${n2} 箱，每箱有 ${n1} ${unit}。這批${item}原本有多少${unit}？`,
+                prefix: `原本有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `活動中，${role}將${item}平均分成 ${n2} 組，每組剛好分得 ${n1} ${unit}。請問原本共有多少${unit}${item}？`,
+                prefix: `原本共有${item}`
+            }),
+            (role, item, unit, n1, n2) => ({
+                text: `${role}採購了 ${n2} 包${item}，每包裡面裝有 ${n1} ${unit}。請問一共採購了多少${unit}${item}？`,
+                prefix: `一共採購了${item}`
+            })
+        ];
+
+        const roles1 = ["老師", "農夫", "麵包店師傅", "水果店店員", "義工", "班長", "媽媽", "社工隊員"];
+        const items1 = [
+            { item: "手工紙", unit: "張" }, { item: "蘋果", unit: "個" },
+            { item: "蛋撻", unit: "個" }, { item: "橙", unit: "個" },
+            { item: "禮物包", unit: "包" }, { item: "貼紙", unit: "張" },
+            { item: "鉛筆", unit: "枝" }, { item: "餅乾", unit: "塊" }
+        ];
+        const num1s1 = [12, 14, 15, 16, 18, 20, 24, 25, 30, 32, 35, 40, 45, 50];
+        const num2s1 = [3, 4, 5, 6, 7, 8, 9];
+
+        roles1.forEach(role => {
+            items1.forEach(it => {
+                num1s1.forEach(n1 => {
+                    num2s1.forEach(n2 => {
+                        const fmtIndex = (n1 + n2) % l1Formats.length;
+                        const data = l1Formats[fmtIndex](role, it.item, it.unit, n1, n2);
+                        levelQuestionBanks[1].push({
+                            text: data.text,
+                            num1: n1, num2: n2, ans: n1 * n2,
+                            isThreeNum: false,
+                            prefix: data.prefix, unit: it.unit
+                        });
+                    });
+                });
+            });
+        });
+
+        // ===== 第二關：來回問題 (3數連乘) =====
+        const l2Formats = [
+            (p, d, c) => ({
+                text: `${p.desc} ${d} ${p.unit}。${p.name}來回${p.act}了 ${c} 次，他共${p.act}了多少${p.unit}？`,
+                prefix: `${p.name}共${p.act}了`
+            }),
+            (p, d, c) => ({
+                text: `${p.name}在${p.desc}（單程 ${d} ${p.unit}）進行訓練，他連續往返${p.act}了 ${c} 趟，累計總長度是多少${p.unit}？`,
+                prefix: `累計總長度是`
+            }),
+            (p, d, c) => ({
+                text: `從起點到目的地單程距離為 ${d} ${p.unit}。${p.name}今天來回${p.act}了 ${c} 次，請問他一共走了多少${p.unit}？`,
+                prefix: `一共走了`
+            })
+        ];
+
+        const places2 = [
+            { desc: "泳池長", name: "柏康", act: "游", unit: "米" },
+            { desc: "跑道一趟長", name: "小明", act: "跑", unit: "米" },
+            { desc: "單程距離是", name: "波波", act: "走", unit: "米" },
+            { desc: "球場長度為", name: "小華", act: "練跑", unit: "米" },
+            { desc: "登山步道單程長", name: "健太", act: "來回爬", unit: "米" }
+        ];
+        const dists2 = [15, 20, 25, 30, 35, 40, 45, 50, 60, 80];
+        const counts2 = [3, 4, 5, 6, 7, 8, 9];
+
+        places2.forEach(p => {
+            dists2.forEach(d => {
+                counts2.forEach(c => {
+                    const fmtIdx = (d + c) % l2Formats.length;
+                    const data = l2Formats[fmtIdx](p, d, c);
+                    levelQuestionBanks[2].push({
+                        text: data.text, num1: d, num2: 2, num3: c, ans: d * 2 * c,
+                        isThreeNum: true,
+                        prefix: data.prefix, unit: p.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第三關：倍數問題 =====
+        const l3Formats = [
+            (b, m, a, bObj, u) => ({
+                text: `${a}有 ${b} ${u}，${bObj}的數量是${a}的 ${m} 倍。${bObj}有多少${u}？`,
+                prefix: `${bObj}有`, unit: u
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}售價是 ${b} 元，${bObj}的價格剛好是${a}的 ${m} 倍。買一份${bObj}需要多少元？`,
+                prefix: `買${bObj}需要`, unit: "元"
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}長 ${b} ${u}，${bObj}的長度比${a}長 ${m} 倍。請問${bObj}長多少${u}？`,
+                prefix: `${bObj}長`, unit: u
+            }),
+            (b, m, a, bObj, u) => ({
+                text: `${a}每天看書 ${b} 頁，${bObj}每天看的頁數是${a}的 ${m} 倍。${bObj}一天看多少頁？`,
+                prefix: `${bObj}一天看`, unit: "頁"
+            })
+        ];
+
+        const baseAmounts3 = [12, 14, 15, 16, 18, 20, 24, 25, 30, 32, 40, 50];
+        const multipliers3 = [3, 4, 5, 6, 7, 8, 9];
+        const subjects3 = [
+            { a: "哥哥的蘋果", bObj: "爸爸的蘋果", u: "個" },
+            { a: "紅絲帶", bObj: "藍絲帶", u: "厘米" },
+            { a: "兒童門票", bObj: "成人門票", u: "元" },
+            { a: "弟弟的積木", bObj: "姐姐的積木", u: "塊" },
+            { a: "小華的郵票", bObj: "小麗的郵票", u: "張" }
+        ];
+
+        baseAmounts3.forEach(b => {
+            multipliers3.forEach(m => {
+                subjects3.forEach(s => {
+                    const fmtIdx = (b + m) % l3Formats.length;
+                    const data = l3Formats[fmtIdx](b, m, s.a, s.bObj, s.u);
+                    levelQuestionBanks[3].push({
+                        text: data.text, num1: b, num2: m, ans: b * m,
+                        isThreeNum: false,
+                        prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第四關：多餘資料 =====
+        const l4Formats = [
+            (t, m, d) => ({
+                text: `每套文具套裝有鉛筆 ${t} 枝、直尺 ${d} 把。${m} 套文具套裝共有鉛筆多少枝？`,
+                prefix: "共有鉛筆", unit: "枝"
+            }),
+            (t, m, d) => ({
+                text: `水果店有西瓜 ${d} 個，蘋果 ${m} 箱。如果每箱蘋果有 ${t} 個，水果店共有蘋果多少個？`,
+                prefix: "共有蘋果", unit: "個"
+            }),
+            (t, m, d) => ({
+                text: `${d} 歲的小明去書店買筆記本，每本筆記本售 ${t} 元，他買了 ${m} 本，一共要付多少元？`,
+                prefix: "一共要付", unit: "元"
+            }),
+            (t, m, d) => ({
+                text: `每包餅乾重 ${d} 克，內有餅乾 ${t} 塊。小華買了 ${m} 包，一共有餅乾多少塊？`,
+                prefix: "一共有餅乾", unit: "塊"
+            }),
+            (t, m, d) => ({
+                text: `展覽會門票每張 ${t} 元。${d} 歲的李先生帶著 ${m} 名兒童入場，購買兒童票共須付多少元？`,
+                prefix: "購買兒童票共須付", unit: "元"
+            })
+        ];
+
+        const targets4 = [12, 15, 18, 20, 24, 25, 30, 50];
+        const mults4 = [3, 4, 5, 6, 7, 8];
+        const distractors4 = [2, 3, 7, 9, 10, 12, 100];
+
+        targets4.forEach(t => {
+            mults4.forEach(m => {
+                distractors4.forEach(d => {
+                    const fmtIdx = (t + m + d) % l4Formats.length;
+                    const data = l4Formats[fmtIdx](t, m, d);
+                    levelQuestionBanks[4].push({
+                        text: data.text, num1: t, num2: m, ans: t * m,
+                        isThreeNum: false,
+                        prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第五關：我和同學 (人數算式 + 連乘) =====
+        const l5FormatsA = [
+            (p, f, name) => ({
+                text: `花生每包 ${p} 元，${name}和 ${f} 位同學各買一包，共需付多少元？`,
+                prefix: "共需付", unit: "元"
+            }),
+            (p, f, name) => ({
+                text: `博物館門票每張 ${p} 元，我和 ${f} 名同學一起入場參觀，我們買門票一共花了多少元？`,
+                prefix: "一共花了", unit: "元"
+            }),
+            (p, f, name) => ({
+                text: `比賽中每人獲發獎金 ${p} 元，${name}與 ${f} 位組員組成一隊，全組共拿到多少獎金？`,
+                prefix: "全組共拿到", unit: "元"
+            })
+        ];
+
+        const l5FormatsB = [
+            (bp, m, f, name) => ({
+                text: `每包花生的售價是薯片的 ${m} 倍。薯片每包售 ${bp} 元，${name}和 ${f} 個同學各買了一包花生，他們共需付多少元？`,
+                prefix: "他們共需付", unit: "元"
+            }),
+            (bp, m, f, name) => ({
+                text: `模型車的價格是積木的 ${m} 倍。積木一盒 ${bp} 元，我和 ${f} 位同學每人買了一盒模型車，我們一共花了多少元？`,
+                prefix: "我們一共花了", unit: "元"
+            })
+        ];
+
+        const prices5 = [12, 15, 18, 20, 24, 25, 28, 30, 35, 40];
+        const friends5 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const names5 = ["柏康", "小明", "健太", "波波", "小華", "美美"];
+
+        prices5.forEach(p => {
+            friends5.forEach(f => {
+                const name = names5[f % names5.length];
+                const fmtIdx = (p + f) % l5FormatsA.length;
+                const data = l5FormatsA[fmtIdx](p, f, name);
+                levelQuestionBanks[5].push({
+                    text: data.text, num1: p, num2: 1 + f, ans: p * (1 + f),
+                    isThreeNum: false, prefix: data.prefix, unit: data.unit
+                });
+            });
+        });
+
+        const basePrices5B = [5, 6, 8, 10, 11, 12, 15];
+        const mults5B = [2, 3, 4, 5];
+        const friends5B = [2, 3, 4, 5, 6, 7];
+
+        basePrices5B.forEach(bp => {
+            mults5B.forEach(m => {
+                friends5B.forEach(f => {
+                    const name = names5[(bp + m) % names5.length];
+                    const fmtIdx = (bp + f) % l5FormatsB.length;
+                    const data = l5FormatsB[fmtIdx](bp, m, f, name);
+                    levelQuestionBanks[5].push({
+                        text: data.text, num1: bp, num2: m, num3: 1 + f, ans: bp * m * (1 + f),
+                        isThreeNum: true, prefix: data.prefix, unit: data.unit
+                    });
+                });
+            });
+        });
+
+        // ===== 第六關：一打/半打 (完全隱藏 12 / 6 提示) =====
+        const l6FormatsDozen = [
+            (item, unit, store, role, a) => ({
+                text: `${role}在${store}購買了 ${a} 打${item}，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${store}把${item}每 1 打包裝成一盒。店員賣出 ${a} 盒，共賣出${item}多少${unit}？`,
+                prefix: `共賣出${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${role}買了 ${a} 盒${item}，如果每盒剛好裝 1 打，一共有${item}多少${unit}？`,
+                prefix: `一共有${item}`, unit: unit
+            })
+        ];
+
+        const l6FormatsHalf = [
+            (item, unit, store, role, a) => ({
+                text: `${role}買了 ${a} 盒${item}，每盒有半打，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `每袋${item}裝有半打。媽媽買了 ${a} 袋，一共有${item}多少${unit}？`,
+                prefix: `一共有${item}`, unit: unit
+            }),
+            (item, unit, store, role, a) => ({
+                text: `${store}把${item}每半打分裝成一包。顧客購買了 ${a} 包，共有${item}多少${unit}？`,
+                prefix: `共有${item}`, unit: unit
+            })
+        ];
+
+        const l6FormatsMulti = [
+            (item, unit, boxItem, d) => ({
+                text: `每個紙盒可裝${item} ${boxItem} ${unit}。餅店準備了 ${d} 打紙盒，最多可裝${item}多少${unit}？`,
+                prefix: `最多可裝${item}`, unit: unit
+            }),
+            (item, unit, boxItem, d) => ({
+                text: `每托盤可放${item} ${boxItem} ${unit}。餐廳買入托盤 ${d} 打，最多可放${item}多少${unit}？`,
+                prefix: `最多可放${item}`, unit: unit
+            })
+        ];
+
+        const singleNums6 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const items6List = [
+            { item: "雞蛋", unit: "隻", store: "超市", role: "媽媽" },
+            { item: "鉛筆", unit: "枝", store: "文具店", role: "老師" },
+            { item: "蛋撻", unit: "個", store: "餅店", role: "爸爸" },
+            { item: "手帕", unit: "條", store: "百貨公司", role: "小麗" },
+            { item: "蘋果", unit: "個", store: "水果店", role: "姨姨" }
+        ];
+
+        singleNums6.forEach(a => {
+            items6List.forEach((it, idx) => {
+                // 1 打題型 (隱藏12)
+                const fmtDIdx = (a + idx) % l6FormatsDozen.length;
+                const dataD = l6FormatsDozen[fmtDIdx](it.item, it.unit, it.store, it.role, a);
+                levelQuestionBanks[6].push({
+                    text: dataD.text, num1: 12, num2: a, ans: 12 * a,
+                    isThreeNum: false, prefix: dataD.prefix, unit: dataD.unit
+                });
+
+                // 半打題型 (隱藏6)
+                const fmtHIdx = (a + idx) % l6FormatsHalf.length;
+                const dataH = l6FormatsHalf[fmtHIdx](it.item, it.unit, it.store, it.role, a);
+                levelQuestionBanks[6].push({
+                    text: dataH.text, num1: 6, num2: a, ans: 6 * a,
+                    isThreeNum: false, prefix: dataH.prefix, unit: dataH.unit
+                });
+            });
+        });
+
+        // 3數連乘 (含打數)
+        const boxItems6 = [2, 3, 4, 5, 6, 7, 8, 9];
+        const dozens6 = [2, 3, 4, 5, 6, 7, 8];
+
+        boxItems6.forEach(itemCount => {
+            dozens6.forEach(d => {
+                const fmtIdx = (itemCount + d) % l6FormatsMulti.length;
+                const dataM = l6FormatsMulti[fmtIdx]("西餅", "件", itemCount, d);
+                levelQuestionBanks[6].push({
+                    text: dataM.text, num1: itemCount, num2: 12, num3: d, ans: itemCount * 12 * d,
+                    isThreeNum: true, prefix: dataM.prefix, unit: dataM.unit
+                });
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initQuestionBanks();
+
+        ['eq-rect-input', 'in-ans1', 'in-ans2'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('focus', () => { activeInputId = id; });
+                el.addEventListener('click', () => { activeInputId = id; });
+            }
+        });
+    });
+
+    function keypadPress(key) {
+        const inputEl = document.getElementById(activeInputId);
+        if (!inputEl || inputEl.disabled) return;
+
+        if (key === 'CLEAR') {
+            inputEl.value = '';
+        } else if (key === 'BACK') {
+            inputEl.value = inputEl.value.slice(0, -1);
+        } else {
+            if (['＋', '－', '×', '÷'].includes(key)) {
+                if (activeInputId !== 'eq-rect-input') return;
+                inputEl.value += key;
+            } else {
+                inputEl.value += key;
+            }
+        }
+    }
+
+    function openLevelSelect() {
+        if (demoTimerInterval) clearInterval(demoTimerInterval);
+        for(let i=1; i<=7; i++) {
+            const modal = document.getElementById(`strategy-modal-lv${i}`);
+            if(modal) modal.style.display = 'none';
+            const winModal = document.getElementById(`lv${i}-win-modal`);
+            if(winModal) winModal.style.display = 'none';
+        }
+        document.getElementById('game-win-modal').style.display = 'none';
+        document.getElementById('level-select-modal').style.display = 'flex';
+    }
+
+    function selectLevel(lv) {
+        currentLevel = lv;
+        currentQIndex = 0;
+        totalQuestions = (lv === 7) ? 10 : 5;
+        score = 0;
+
+        // 第七關：隨機抽選第1-6關題目（每關最少1題，共10題）
+        if (lv === 7) {
+            let selectedPool = [];
+            
+            // 1. 先從 1 至 6 關各隨機抽取 1 題，保證每關最少一題
+            for (let l = 1; l <= 6; l++) {
+                let tempBank = [...levelQuestionBanks[l]];
+                shuffleArray(tempBank);
+                selectedPool.push(tempBank[0]);
+            }
+
+            // 2. 收集 1 至 6 關的所有剩餘題目，再隨機補齊至 10 題
+            let fullPool = [];
+            for (let l = 1; l <= 6; l++) {
+                fullPool.push(...levelQuestionBanks[l]);
+            }
+            shuffleArray(fullPool);
+
+            for (let i = 0; selectedPool.length < 10 && i < fullPool.length; i++) {
+                selectedPool.push(fullPool[i]);
+            }
+
+            // 3. 徹底打亂這 10 題順序
+            shuffleArray(selectedPool);
+            levelQuestionBanks[7] = selectedPool;
+
+        } else if (levelQuestionBanks[lv] && levelQuestionBanks[lv].length > 0) {
+            shuffleArray(levelQuestionBanks[lv]);
+        }
+
+        document.getElementById('level-select-modal').style.display = 'none';
+        for(let i=1; i<=7; i++) {
+            const winModal = document.getElementById(`lv${i}-win-modal`);
+            if(winModal) winModal.style.display = 'none';
+        }
+        document.getElementById('game-win-modal').style.display = 'none';
+
+        // 第7關不設解難策略，直接開始；1-6關進入解難策略Modal
+        if (lv === 7) {
+            loadQuestion();
+        } else {
+            const stratModal = document.getElementById(`strategy-modal-lv${lv}`);
+            if(stratModal) stratModal.style.display = 'flex';
+            startDemoAnimationTimer(lv);
+        }
+    }
+
+    function startDemoAnimationTimer(level) {
+        demoCountdown = 10;
+        const timerEl = document.getElementById(`demo-timer-lv${level}`);
+        const visualDemo = document.getElementById(`visual-demo-lv${level}`);
+
+        if(visualDemo) visualDemo.classList.remove('animate');
+        if(timerEl) {
+            timerEl.innerText = `⏳ 10 秒後自動播放圖解動畫...`;
+            timerEl.style.color = "#0288d1";
+        }
+
+        if (demoTimerInterval) clearInterval(demoTimerInterval);
+
+        demoTimerInterval = setInterval(() => {
+            demoCountdown--;
+            if (demoCountdown > 0) {
+                if(timerEl) timerEl.innerText = `⏳ ${demoCountdown} 秒後自動播放圖解動畫...`;
+            } else {
+                clearInterval(demoTimerInterval);
+                replayDemoAnimation(level);
+            }
+        }, 1000);
+    }
+
+    function replayDemoAnimation(level) {
+        if (demoTimerInterval) clearInterval(demoTimerInterval);
+        
+        const timerEl = document.getElementById(`demo-timer-lv${level}`);
+        const visualDemo = document.getElementById(`visual-demo-lv${level}`);
+
+        if(timerEl) {
+            timerEl.innerText = "▶️ 圖解動畫展示中...";
+            timerEl.style.color = "#00b894";
+        }
+
+        if(visualDemo) {
+            visualDemo.classList.remove('animate');
+            void visualDemo.offsetWidth;
+            visualDemo.classList.add('animate');
+        }
+    }
+
+    function closeStrategyModal(level) {
+        if (demoTimerInterval) clearInterval(demoTimerInterval);
+        const modal = document.getElementById(`strategy-modal-lv${level}`);
+        if(modal) modal.style.display = 'none';
+        loadQuestion();
+    }
+
+    function updateUI() {
+        document.getElementById('lv-num').innerText = currentLevel;
+        let titleMap = { 1: "找原有", 2: "來回", 3: "倍數", 4: "多餘資料", 5: "我和同學", 6: "一打/半打", 7: "綜合大挑戰" };
+        document.getElementById('lv-title').innerText = titleMap[currentLevel] || "";
+        document.getElementById('q-curr').innerText = currentQIndex + 1;
+        document.getElementById('q-total').innerText = totalQuestions;
+        document.getElementById('score').innerText = score;
+    }
+
+    function loadQuestion() {
+        isStep1Passed = false;
+        hasErroredThisQuestion = false;
+        updateUI();
+
+        const bank = levelQuestionBanks[currentLevel];
+        currentQData = bank[currentQIndex % bank.length];
+
+        document.getElementById('problem-text').innerText = currentQData.text;
+
+        const eqInput = document.getElementById('eq-rect-input');
+        eqInput.value = "";
+        eqInput.disabled = false;
+        document.getElementById('eq-status-icon').innerText = "";
+
+        document.getElementById('step2-area').style.display = 'none';
+        document.getElementById('in-ans1').value = "";
+        document.getElementById('in-ans1').disabled = false;
+
+        const statementBox = document.getElementById('statement-box');
+        statementBox.innerHTML = `
+            <span>${currentQData.prefix}</span>
+            <input type="text" id="in-ans2" class="single-rect-input statement-input" placeholder="答案" readonly>
+            <span>${currentQData.unit}</span>
+        `;
+
+        document.getElementById('in-ans2').addEventListener('click', () => { activeInputId = 'in-ans2'; });
+        activeInputId = 'eq-rect-input';
+
+        const btn = document.getElementById('main-btn');
+        btn.innerText = "檢查橫式";
+        btn.disabled = false;
+
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('feedback').style.color = "#2d3436";
+    }
+
+    function handleButtonClick() {
+        if (!isStep1Passed) {
+            checkStep1Equation();
+        } else {
+            checkStep2Answer();
+        }
+    }
+
+    function checkStep1Equation() {
+        const rawStr = document.getElementById('eq-rect-input').value.trim();
+        const msg = document.getElementById('feedback');
+        const statusIcon = document.getElementById('eq-status-icon');
+
+        if (!rawStr) {
+            statusIcon.innerText = "❌";
+            msg.style.color = "#d63031";
+            msg.innerText = "❌ 不正確，請改正！";
+            triggerErrorPenalty();
+            return;
+        }
+
+        const cleanStr = rawStr.replace(/\s+/g, '').replace(/×/g, '*').replace(/x/gi, '*').replace(/÷/g, '/');
+        const isThreeNumQuestion = (currentQData && currentQData.isThreeNum);
+
+        if (!isThreeNumQuestion) {
+            const parts = cleanStr.split(/([\+\-\*/])/);
+            if (parts.length !== 3) {
+                statusIcon.innerText = "❌";
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+                triggerErrorPenalty();
+                return;
+            }
+
+            const n1 = parseInt(parts[0], 10);
+            const op = parts[1];
+            const n2 = parseInt(parts[2], 10);
+
+            const isOpCorrect = (op === '*');
+            const isNumsCorrect = (
+                (n1 === currentQData.num1 && n2 === currentQData.num2) ||
+                (n1 === currentQData.num2 && n2 === currentQData.num1)
+            );
+
+            if (isOpCorrect && isNumsCorrect) {
+                passStep1(statusIcon, msg, "🌟 橫式寫對了！請繼續算出答案：");
+            } else {
+                statusIcon.innerText = "❌";
+                triggerErrorPenalty();
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+            }
+        } else {
+            const parts = cleanStr.split(/([\+\-\*/])/);
+            if (parts.length !== 5) {
+                statusIcon.innerText = "❌";
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+                triggerErrorPenalty();
+                return;
+            }
+
+            const n1 = parseInt(parts[0], 10);
+            const op1 = parts[1];
+            const n2 = parseInt(parts[2], 10);
+            const op2 = parts[3];
+            const n3 = parseInt(parts[4], 10);
+
+            const isOpCorrect = (op1 === '*' && op2 === '*');
+            const userNums = [n1, n2, n3].sort((a, b) => a - b);
+            const correctNums = [currentQData.num1, currentQData.num2, currentQData.num3].sort((a, b) => a - b);
+
+            const isNumsCorrect = (
+                userNums[0] === correctNums[0] &&
+                userNums[1] === correctNums[1] &&
+                userNums[2] === correctNums[2]
+            );
+
+            if (isOpCorrect && isNumsCorrect) {
+                passStep1(statusIcon, msg, "🌟 連乘橫式完全正確！請繼續算出答案：");
+            } else {
+                statusIcon.innerText = "❌";
+                triggerErrorPenalty();
+                msg.style.color = "#d63031";
+                msg.innerText = "❌ 不正確，請改正！";
+            }
+        }
+    }
+
+    function passStep1(statusIcon, msg, successMsg) {
+        isStep1Passed = true;
+        statusIcon.innerText = "✅";
+        msg.style.color = "#00b894";
+        msg.innerText = successMsg;
+
+        document.getElementById('eq-rect-input').disabled = true;
+        document.getElementById('step2-area').style.display = 'flex';
+        document.getElementById('main-btn').innerText = "提交答案";
+        activeInputId = 'in-ans1';
+    }
+
+    function checkStep2Answer() {
+        const ans1 = parseInt(document.getElementById('in-ans1').value.trim(), 10);
+        const ans2 = parseInt(document.getElementById('in-ans2').value.trim(), 10);
+        const msg = document.getElementById('feedback');
+
+        if (isNaN(ans1) || isNaN(ans2)) {
+            msg.style.color = "#d63031";
+            msg.innerText = "❌ 不正確，請改正！";
+            triggerErrorPenalty();
+            return;
+        }
+
+        if (ans1 === currentQData.ans && ans2 === currentQData.ans) {
+            document.getElementById('main-btn').disabled = true;
+            document.getElementById('in-ans1').disabled = true;
+            document.getElementById('in-ans2').disabled = true;
+            msg.style.color = "#00b894";
+            
+            if (!hasErroredThisQuestion) {
+                score += 20;
+                msg.innerText = "🎉 完全正確！一次答對棒極了！(+20分)";
+            } else {
+                score += 10;
+                msg.innerText = "👍 成功改正並算對了！加油！(+10分)";
+            }
+
+            currentQIndex++;
+            updateUI();
+
+            setTimeout(() => {
+                if (currentQIndex >= totalQuestions) {
+                    if (currentLevel < 7) {
+                        document.getElementById(`lv${currentLevel}-win-modal`).style.display = 'flex';
+                    } else {
+                        showGameWinModal();
+                    }
+                } else {
+                    loadQuestion();
+                }
+            }, 1500);
+
+        } else {
+            triggerErrorPenalty();
+            msg.style.color = "#d63031";
+            msg.innerText = "❌ 不正確，請改正！";
+        }
+    }
+
+    function showGameWinModal() {
+        for(let i=1; i<=7; i++) {
+            const winModal = document.getElementById(`lv${i}-win-modal`);
+            if(winModal) winModal.style.display = 'none';
+        }
+        document.getElementById('final-stats').innerText = `總得分：${score} 分`;
+        document.getElementById('game-win-modal').style.display = 'flex';
+    }
+
+    function triggerErrorPenalty() {
+        if (!hasErroredThisQuestion) {
+            hasErroredThisQuestion = true;
+            totalQuestions++;
+            updateUI();
+        }
+    }
+
+    openLevelSelect();
+</script>
+
+</body>
+</html>
